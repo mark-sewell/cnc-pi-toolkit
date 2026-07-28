@@ -28,6 +28,7 @@ load_library() {
 
 
 load_library "logging"
+load_library "system"
 load_library "node"
 
 
@@ -49,6 +50,11 @@ installer_banner() {
 installer_check() {
 
 log_info "Checking system..."
+
+log_success "Model: $(system_get_model)"
+log_success "OS: $(system_get_os_name)"
+log_success "Architecture: $(system_get_architecture)"
+log_success "RAM: $(system_get_ram_mb) MB"
 
     if ! node_is_installed; then
         log_warning "Node.js not installed."
