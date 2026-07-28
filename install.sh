@@ -27,6 +27,7 @@ load_library() {
 }
 
 
+load_library "logging"
 load_library "node"
 
 
@@ -47,12 +48,12 @@ installer_banner() {
 
 installer_check() {
 
-    echo "Checking system..."
+log_info "Checking system..."
 
     if ! node_is_installed; then
-        echo "Node.js not installed."
+        log_warning "Node.js not installed."
     else
-        echo "Node.js: $(node_get_version)"
+       log_success "Node.js $(node_get_version)"
     fi
 
 }
@@ -65,7 +66,7 @@ installer_main() {
     installer_check
 
     echo
-    echo "Installer framework ready."
+   log_success "Installer framework ready."
     echo
 
 }
