@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
 # CNC Pi Toolkit
-<<<<<<< HEAD
 # Logging library
 #
 

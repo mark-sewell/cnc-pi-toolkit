@@ -1,17 +1,12 @@
-#!/usr/bin/env bash
-#
-# CNC Pi Toolkit
-<<<<<<< HEAD
+
 # Main installer entry point
 =======
 #
-# Main installer entry point.
->>>>>>> feature/project-foundation
+# 
 #
 
 set -Eeuo pipefail
 
-<<<<<<< HEAD
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
