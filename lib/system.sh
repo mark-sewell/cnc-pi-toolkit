@@ -12,17 +12,19 @@ set -Eeuo pipefail
 #==============================================================================
 # Read-only system information
 #==============================================================================
+HOSTNAME="$(hostname)"
+KERNEL="$(uname -r)"
+ARCH="$(uname -m)"
 
-readonly HOSTNAME="$(hostname)"
-readonly KERNEL="$(uname -r)"
-readonly ARCH="$(uname -m)"
+readonly HOSTNAME
+readonly KERNEL
+readonly ARCH
 
 OS_NAME=""
 OS_VERSION=""
 OS_CODENAME=""
 
 PI_MODEL="Unknown"
-PI_REVISION="Unknown"
 
 TOTAL_RAM_MB=0
 

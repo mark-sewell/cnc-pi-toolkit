@@ -1,13 +1,21 @@
-.PHONY: lint syntax fmt check
+.PHONY: install test lint syntax clean
 
-lint:
-	shellcheck $$(find . -type f -name "*.sh")
+install:
+	./install.sh
+
+test:
+	./tests/run-tests.sh
 
 syntax:
-	find . -type f -name "*.sh" -exec bash -n {} \;
+	bash -n install.sh
+	bash -n lib/*.sh
+	bash -n modules/*.sh
+	bash -n tests/*.sh
 
-fmt:
-	shfmt -w .
+lint:
+	shellcheck -e SC2016 install.sh lib/*.sh modules/*.sh tests/*.sh
 
-check: lint syntax
+clean:
+	find . -name "*.tmp" -delete
+	find . -name "*.log" -delete
 

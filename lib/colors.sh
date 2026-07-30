@@ -12,17 +12,21 @@
 
 if [[ -t 1 ]] && command -v tput >/dev/null 2>&1; then
     if [[ "$(tput colors 2>/dev/null || echo 0)" -ge 8 ]]; then
-        readonly RESET="$(tput sgr0)"
-        readonly BOLD="$(tput bold)"
+        RESET="$(tput sgr0)"
+        BOLD="$(tput bold)"
 
-        readonly BLACK="$(tput setaf 0)"
-        readonly RED="$(tput setaf 1)"
-        readonly GREEN="$(tput setaf 2)"
-        readonly YELLOW="$(tput setaf 3)"
-        readonly BLUE="$(tput setaf 4)"
-        readonly MAGENTA="$(tput setaf 5)"
-        readonly CYAN="$(tput setaf 6)"
-        readonly WHITE="$(tput setaf 7)"
+        BLACK="$(tput setaf 0)"
+        RED="$(tput setaf 1)"
+        GREEN="$(tput setaf 2)"
+        YELLOW="$(tput setaf 3)"
+        BLUE="$(tput setaf 4)"
+        MAGENTA="$(tput setaf 5)"
+        CYAN="$(tput setaf 6)"
+        WHITE="$(tput setaf 7)"
+
+        readonly RESET BOLD
+        readonly BLACK RED GREEN YELLOW
+        readonly BLUE MAGENTA CYAN WHITE
     fi
 fi
 
