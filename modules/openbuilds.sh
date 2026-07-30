@@ -33,6 +33,22 @@ openbuilds_get_version() {
         2>/dev/null
 }
 
+openbuilds_get_architecture() {
+    dpkg --print-architecture
+}
+
+openbuilds_is_armhf() {
+    [[ "$(openbuilds_get_architecture)" == "armhf" ]]
+}
+
+openbuilds_is_arm64() {
+    [[ "$(openbuilds_get_architecture)" == "arm64" ]]
+}
+
+openbuilds_is_amd64() {
+    [[ "$(openbuilds_get_architecture)" == "amd64" ]]
+}
+
 openbuilds_get_electron_version() {
     [[ -f "${OPENBUILDS_PROJECT_DIR}/package.json" ]] || return 1
 
@@ -139,18 +155,16 @@ _openbuilds_install_dependencies() {
 
 
 openbuilds_rebuild_serialport() {
-local electron_version
-electron_version="$(openbuilds_get_electron_version)" || {
-    log_error "Unable to determine the Electron version."
-    return 1
-}
-    local architecture
+    local electron_version
 
-    architecture="$(dpkg --print-architecture)"
+    electron_version="$(openbuilds_get_electron_version)" || {
+        log_error "Unable to determine the Electron version."
+        return 1
+    }
 
-    if [[ "${architecture}" != "armhf" ]]; then
+    if ! openbuilds_is_armhf; then
         log_info \
-            "Dedicated ARMv7 SerialPort rebuild is not required for ${architecture}."
+            "Dedicated ARMv7 SerialPort rebuild is not required for $(openbuilds_get_architecture)."
         return 0
     fi
 
