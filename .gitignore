@@ -1,0 +1,23 @@
+# Backup files
+*.save
+*.bak
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+
+# Node
+node_modules/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
