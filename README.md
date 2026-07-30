@@ -1,95 +1,185 @@
 # CNC Pi Toolkit
 
-> A professional toolkit for installing, maintaining and diagnosing CNC software on Raspberry Pi.
+A modular toolkit for preparing and managing a Raspberry Pi as a CNC control system.
 
-## Overview
-
-CNC Pi Toolkit is an open-source project that simplifies setting up a Raspberry Pi as a CNC controller.
-
-The goal is to provide a reliable, repeatable installation process together with powerful diagnostic and maintenance tools for GRBL-based CNC machines.
-
-## Features
-
-### Current
-- Raspberry Pi detection
-- Raspberry Pi OS detection
-- Git-based installation
-- Modular Bash framework
-
-### Planned
-- OpenBuilds CONTROL installer
-- Automatic Node.js installation
-- Electron native module rebuild
-- Serial/USB diagnostics
-- OpenGL/WebGL diagnostics
-- GRBL communication tests
-- CNCjs installer
-- bCNC installer
-- UGS Platform installer
-- Backup and restore tools
-- System health diagnostics
-
-## Supported Hardware
-
-- Raspberry Pi 4
-- Raspberry Pi 5
-
-## Supported Operating Systems
-
-- Raspberry Pi OS Bookworm (32-bit)
-- Raspberry Pi OS Bookworm (64-bit)
-- Raspberry Pi OS Trixie (32-bit)
-- Raspberry Pi OS Trixie (64-bit)
-
-## Project Status
-
-This project is currently under active development.
-
-The initial focus is to provide a reliable installer for OpenBuilds CONTROL on Raspberry Pi, followed by diagnostics and support for additional CNC applications.
-
-## Roadmap
-
-### Version 0.1
-- Project foundation
-- Core libraries
-- Logging
-- System detection
-
-### Version 0.2
-- OpenBuilds CONTROL installer
-- Node.js installer
-- Electron repair tools
-
-### Version 0.3
-- CNC diagnostics
-- USB diagnostics
-- Graphics diagnostics
-
-### Version 0.4
-- Backup and restore
-- Automatic updates
-- Performance tuning
-
-### Version 1.0
-- Stable production release
-
-## Contributing
-
-Contributions, bug reports, feature requests, and documentation improvements are welcome.
-
-Please use GitHub Issues and Pull Requests.
-
-## License
-
-Released under the MIT License.
-
-## Author
-
-Mark Sewell
+The toolkit automates software installation, system verification, diagnostics and communication with GRBL-based CNC controllers.
 
 ---
 
-**Work in progress**
+# Features
 
-This project is actively developed and new features are added regularly.
+## System
 
+- Raspberry Pi detection
+- Raspberry Pi OS detection
+- System information
+- Hardware diagnostics
+
+## Software
+
+- Git installation and verification
+- Node.js installation and verification
+- OpenBuilds CONTROL installation
+- Automatic dependency management
+
+## CNC
+
+- Serial device detection
+- Serial I/O library
+- GRBL communication framework
+- System diagnostics
+
+---
+
+# Project Structure
+
+```
+cnc-pi-toolkit/
+│
+├── docs/
+├── lib/
+├── modules/
+├── tests/
+│
+├── install.sh
+├── README.md
+├── LICENSE
+└── Makefile
+```
+
+---
+
+# Quick Start
+
+Clone the repository:
+
+```bash
+git clone git@github.com:mark-sewell/cnc-pi-toolkit.git
+cd cnc-pi-toolkit
+```
+
+Run the installer:
+
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+The installer will:
+
+- Detect the Raspberry Pi
+- Verify the operating system
+- Install Git
+- Install Node.js
+- Install OpenBuilds CONTROL
+- Run diagnostics
+
+---
+
+# Diagnostics
+
+Example output:
+
+```text
+=================================
+ CNC Pi Toolkit Diagnostics
+=================================
+
+System
+------
+✓ Raspberry Pi 4
+✓ Raspberry Pi OS Bookworm
+
+Software
+--------
+✓ Git
+✓ Node.js
+✓ OpenBuilds CONTROL
+
+Hardware
+--------
+⚠ No serial devices detected
+⚠ No GRBL controller detected
+
+Overall
+-------
+Software Ready
+Hardware Pending
+```
+
+---
+
+# Current Status
+
+Current release:
+
+**v0.3.0-alpha**
+
+Completed:
+
+- Modular installer framework
+- Git installer
+- Node.js installer
+- OpenBuilds CONTROL installer
+- Serial detection
+- Serial I/O
+- GRBL framework
+- Diagnostics
+
+---
+
+# Roadmap
+
+## v0.4.0-alpha
+
+- GRBL handshake
+- Read firmware version
+- Machine status
+- Controller settings
+
+## v0.5.0-alpha
+
+- Firmware management
+- Configuration backup
+- G-code sender
+
+See:
+
+```
+docs/ROADMAP.md
+```
+
+---
+
+# Documentation
+
+Additional documentation is available in:
+
+```
+docs/
+├── ARCHITECTURE.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+└── ROADMAP.md
+```
+
+---
+
+# Supported Platform
+
+Currently tested on:
+
+- Raspberry Pi 4 Model B
+- Raspberry Pi OS 12 (Bookworm)
+
+---
+
+# License
+
+Released under the MIT License.
+
+See:
+
+```
+LICENSE
+```
