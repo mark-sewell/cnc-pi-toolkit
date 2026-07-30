@@ -10,7 +10,6 @@ readonly OPENBUILDS_APP_NAME="OpenBuilds CONTROL"
 readonly OPENBUILDS_REPOSITORY="https://github.com/OpenBuilds/OpenBuilds-CONTROL.git"
 readonly OPENBUILDS_PROJECT_DIR="${HOME}/OpenBuilds-CONTROL"
 readonly OPENBUILDS_DESKTOP_FILE="OpenBuilds-CONTROL.desktop"
-readonly OPENBUILDS_ELECTRON_VERSION="23.3.13"
 
 
 openbuilds_serialport_binding_path() {
@@ -32,6 +31,27 @@ openbuilds_get_version() {
     node -p \
         "require('${OPENBUILDS_PROJECT_DIR}/package.json').version" \
         2>/dev/null
+}
+
+openbuilds_get_electron_version() {
+    [[ -f "${OPENBUILDS_PROJECT_DIR}/package.json" ]] || return 1
+
+    (
+        cd "${OPENBUILDS_PROJECT_DIR}"
+
+        node -e '
+            const pkg = require("./package.json");
+            const value =
+                pkg.devDependencies?.electron ||
+                pkg.dependencies?.electron;
+
+            if (!value) {
+                process.exit(1);
+            }
+
+            console.log(value.replace(/^[^0-9]*/, ""));
+        '
+    )
 }
 
 
@@ -119,6 +139,11 @@ _openbuilds_install_dependencies() {
 
 
 openbuilds_rebuild_serialport() {
+local electron_version
+electron_version="$(openbuilds_get_electron_version)" || {
+    log_error "Unable to determine the Electron version."
+    return 1
+}
     local architecture
 
     architecture="$(dpkg --print-architecture)"
@@ -140,7 +165,7 @@ openbuilds_rebuild_serialport() {
 
         npm_config_build_from_source=true \
         npm_config_runtime=electron \
-        npm_config_target="${OPENBUILDS_ELECTRON_VERSION}" \
+        npm_config_target="${electron_version}" \
         npm_config_arch=arm \
         npm_config_target_arch=arm \
         npm_config_arm_version=7 \
