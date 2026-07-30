@@ -21,7 +21,7 @@ source "${PROJECT_ROOT}/modules/grbl.sh"
 source "${PROJECT_ROOT}/modules/diagnostics.sh"
 
 usage() {
-    cat <<EOF
+    cat <<'EOF'
 CNC Pi Toolkit
 
 Usage:
@@ -29,12 +29,13 @@ Usage:
     ./cnc diagnostics
     ./cnc test
     ./cnc version
+    ./cnc status
 EOF
 }
 
 case "${1:-}" in
     install)
-        ./install.sh
+        "${PROJECT_ROOT}/install.sh"
         ;;
 
     diagnostics)
@@ -42,11 +43,27 @@ case "${1:-}" in
         ;;
 
     test)
-        ./tests/run-tests.sh
+        "${PROJECT_ROOT}/tests/run-tests.sh"
         ;;
 
     version)
         echo "CNC Pi Toolkit v0.4.0"
+        ;;
+
+    status)
+        port="$(grbl_find_port || true)"
+
+        if [[ -z "${port}" ]]; then
+            log_error "No GRBL serial device was detected."
+            exit 1
+        fi
+
+        if fuser "${port}" >/dev/null 2>&1; then
+            log_error "Serial port ${port} is busy. Close OpenBuilds CONTROL first."
+            exit 1
+        fi
+
+        grbl_probe "${port}"
         ;;
 
     ""|-h|--help|help)
@@ -55,6 +72,7 @@ case "${1:-}" in
 
     *)
         echo "Unknown command: $1"
+        echo
         usage
         exit 1
         ;;

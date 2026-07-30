@@ -46,7 +46,66 @@ grbl_soft_reset() {
 
     serial_io_write_raw "${port}" '\030'
 }
+grbl_probe() {
+    local port="${1:-$(grbl_find_port)}"
+    local startup
+    local info
+    local status
+    local firmware=""
+    local vendor=""
+    local state=""
+    local mpos=""
+    local wco=""
+    local feed=""
+    local spindle=""
 
+    if [[ -z "${port}" ]]; then
+        log_error "No serial device available for GRBL probing."
+        return 1
+    fi
+
+    serial_io_configure "${port}" "${GRBL_DEFAULT_BAUD}"
+    serial_io_flush "${port}"
+
+    serial_io_write_raw "${port}" '\030'
+    sleep 1
+    startup="$(serial_io_read "${port}" 2 | tr -d '\r' || true)"
+
+grbl_send_command "${port}" '$I'
+sleep 0.3
+info="$(grbl_read_response "${port}" 2 | tr -d '\r' || true)"
+
+serial_io_write_raw "${port}" '?'
+sleep 0.2
+status="$(grbl_read_response "${port}" 2 | tr -d '\r' || true)"
+
+    firmware="$(grep -oE 'Grbl [0-9]+\.[0-9]+[a-z]?' <<< "${startup}" | head -n 1 || true)"
+    vendor="$(grep -vE '^(Grbl|\[|ok|$)' <<< "${info}" | head -n 1 || true)"
+    if [[ "${info}" =~ \[VER:([^:]+): ]]; then
+    version="${BASH_REMATCH[1]}"
+fi
+
+if [[ "${version}" =~ \.([0-9]{8})$ ]]; then
+    build="${BASH_REMATCH[1]}"
+fi
+
+    state="$(sed -n 's/^<\([^|>]*\).*/\1/p' <<< "${status}" | head -n 1)"
+    mpos="$(sed -n 's/.*|MPos:\([^|>]*\).*/\1/p' <<< "${status}" | head -n 1)"
+    wco="$(sed -n 's/.*|WCO:\([^|>]*\).*/\1/p' <<< "${status}" | head -n 1)"
+    feed="$(sed -n 's/.*|FS:\([^,|>]*\),.*/\1/p' <<< "${status}" | head -n 1)"
+    spindle="$(sed -n 's/.*|FS:[^,|>]*,\([^|>]*\).*/\1/p' <<< "${status}" | head -n 1)"
+
+    printf 'port=%s\n' "${port}"
+    printf 'vendor=%s\n' "${vendor:-Unknown}"
+    printf 'firmware=%s\n' "${firmware:-Unknown}"
+    printf 'version=%s\n' "${version:-Unknown}"
+    printf 'build=%s\n' "${build:-Unknown}"
+    printf 'state=%s\n' "${state:-Unknown}"
+    printf 'mpos=%s\n' "${mpos:-Unknown}"
+    printf 'wco=%s\n' "${wco:-Unknown}"
+    printf 'feed=%s\n' "${feed:-Unknown}"
+    printf 'spindle=%s\n' "${spindle:-Unknown}"
+}
 grbl_verify() {
     local port
     local response
