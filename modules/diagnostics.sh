@@ -43,6 +43,14 @@ diagnostics_check_serial() {
     return 1
 }
 
+diagnostics_check_grbl() {
+    if grbl_verify; then
+        return 0
+    fi
+
+    return 1
+}
+
 diagnostics_run() {
     local failures=0
 
@@ -63,7 +71,7 @@ diagnostics_run() {
 
     echo
     headline "Hardware"
-
+    diagnostics_check_grbl || ((failures += 1))
     diagnostics_check_serial || ((failures += 1))
 
     echo

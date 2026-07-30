@@ -3,75 +3,79 @@
 # CNC Pi Toolkit
 # Main installer entry point
 #
-set -Eeuo pipefail
 
+set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-
-# -------------------------------------------------
-# Load libraries
-# -------------------------------------------------
-
 load_library() {
-    local library="$1"
+    local name="$1"
+    local file="${SCRIPT_DIR}/lib/${name}.sh"
 
-    if [[ -f "${SCRIPT_DIR}/lib/${library}.sh" ]]; then
-        # shellcheck disable=SC1090
-        source "${SCRIPT_DIR}/lib/${library}.sh"
-    else
-        echo "Missing library: ${library}.sh"
+    if [[ ! -f "${file}" ]]; then
+        echo "Missing library: ${file}" >&2
         exit 1
     fi
+
+    # shellcheck disable=SC1090
+    source "${file}"
 }
 
+load_module() {
+    local name="$1"
+    local file="${SCRIPT_DIR}/modules/${name}.sh"
 
+    if [[ ! -f "${file}" ]]; then
+        echo "Missing module: ${file}" >&2
+        exit 1
+    fi
+
+    # shellcheck disable=SC1090
+    source "${file}"
+}
+
+load_library "colors"
 load_library "logging"
 load_library "system"
+load_library "git"
 load_library "node"
+load_library "serial"
+load_library "serial_io"
 
-
-# -------------------------------------------------
-# Basic installer functions
-# -------------------------------------------------
+load_module "openbuilds"
+load_module "grbl"
+load_module "diagnostics"
 
 installer_banner() {
-
     echo
     echo "================================="
     echo " CNC Pi Toolkit Installer"
     echo "================================="
     echo
-
 }
 
+installer_install_dependencies() {
+    headline "Software Installation"
 
-installer_check() {
+    git_install
+    node_install
+    openbuilds_install
+}
 
-    log_info "Checking system..."
+installer_main() {
+    installer_banner
+
     system_init
     print_system_summary
 
-    if ! node_is_installed; then
-        log_warning "Node.js not installed."
-    else
-        log_success "Node.js $(node_get_version)"
-    fi
-
-}
-
-
-installer_main() {
-
-    installer_banner
-
-    installer_check
+    echo
+    installer_install_dependencies
 
     echo
-   log_success "Installer framework ready."
-    echo
+    diagnostics_run || true
 
+    echo
+    log_success "CNC Pi Toolkit installation completed."
 }
 
-
-installer_main
+installer_main "$@"
