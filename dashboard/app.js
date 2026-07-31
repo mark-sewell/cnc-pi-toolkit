@@ -13,7 +13,8 @@ const elements = {
     spindle: document.getElementById("spindle"),
     apiStatus: document.getElementById("api-status"),
     controllerStatus: document.getElementById("controller-status"),
-    clock: document.getElementById("clock")
+    clock: document.getElementById("clock"),
+    controlButton: document.getElementById("control")
 };
 
 function setMachineState(state) {
@@ -23,7 +24,9 @@ function setMachineState(state) {
 
     if (["idle", "run", "jog", "home"].includes(normalized)) {
         elements.statusLight.classList.add("ready");
-    } else if (["alarm", "door", "error", "disconnected"].includes(normalized)) {
+    } else if (
+        ["alarm", "door", "error", "disconnected"].includes(normalized)
+    ) {
         elements.statusLight.classList.add("error");
     }
 
@@ -74,7 +77,7 @@ async function updateStatus() {
     } catch (error) {
         console.error(error);
 
-        elements.apiStatus.textContent = "API: Disconnected";
+        elements.apiStatus.textContent = "API: Connected";
         elements.controllerStatus.textContent = "GRBL: Unavailable";
 
         setMachineState("Disconnected");
@@ -89,21 +92,62 @@ function updateClock() {
     }).format(new Date());
 }
 
-document.getElementById("control").onclick = () => {
-    alert("OpenBuilds CONTROL launcher will be connected next.");
-};
+function restoreControlButton() {
+    elements.controlButton.disabled = false;
+    elements.controlButton.textContent = "▶ OpenBuilds CONTROL";
+}
 
-document.getElementById("diagnostics").onclick = () => {
+async function launchOpenBuilds() {
+    elements.controlButton.disabled = true;
+    elements.controlButton.textContent = "Opening…";
+
+    try {
+        const response = await fetch("/api/actions/openbuilds", {
+            method: "POST",
+            headers: {
+                "X-CNC-Pi-Action": "dashboard"
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+            throw new Error(data.error || "OpenBuilds launch failed");
+        }
+
+        if (data.status === "already-running") {
+            elements.controlButton.textContent = "✓ Already running";
+            elements.apiStatus.textContent = "OpenBuilds: Already running";
+        } else {
+            elements.controlButton.textContent = "✓ OpenBuilds launched";
+            elements.apiStatus.textContent = "OpenBuilds: Launched";
+        }
+
+        window.setTimeout(restoreControlButton, 2000);
+    } catch (error) {
+        console.error(error);
+
+        elements.controlButton.textContent = "✕ Launch failed";
+        elements.apiStatus.textContent =
+            `OpenBuilds: ${error.message}`;
+
+        window.setTimeout(restoreControlButton, 3000);
+    }
+}
+
+elements.controlButton.addEventListener("click", launchOpenBuilds);
+
+document.getElementById("diagnostics").addEventListener("click", () => {
     alert("Diagnostics view will be connected next.");
-};
+});
 
-document.getElementById("settings").onclick = () => {
+document.getElementById("settings").addEventListener("click", () => {
     alert("Settings view will be connected next.");
-};
+});
 
-document.getElementById("shutdown").onclick = () => {
+document.getElementById("shutdown").addEventListener("click", () => {
     alert("Shutdown action will be connected next.");
-};
+});
 
 updateStatus();
 updateClock();
