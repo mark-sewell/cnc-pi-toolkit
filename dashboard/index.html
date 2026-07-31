@@ -2,46 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
     <title>CNC Pi Toolkit</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <main class="dashboard">
+        <header class="hero">
+            <img
+                src="assets/logo.png"
+                class="logo"
+                alt="CNC Pi Toolkit logo"
+            >
 
-<div class="container">
+            <div>
+                <h1>CNC Pi Toolkit</h1>
+                <p>Smarter CNC control. Built on Raspberry Pi.</p>
+            </div>
+        </header>
 
-    <img src="assets/logo.png" class="logo">
+        <section class="machine-card">
+            <div class="machine-heading">
+                <span id="status-light" class="status-light"></span>
 
-    <h1>CNC Pi Toolkit</h1>
+                <div>
+                    <p class="eyebrow">Machine status</p>
+                    <h2 id="machine-title">Connecting…</h2>
+                </div>
+            </div>
 
-    <p class="subtitle">
-        Raspberry Pi CNC Control Centre
-    </p>
+            <div class="machine-details">
+                <div>
+                    <span>Controller</span>
+                    <strong id="controller">Loading…</strong>
+                </div>
 
-    <div class="buttons">
+                <div>
+                    <span>Firmware</span>
+                    <strong id="firmware">Loading…</strong>
+                </div>
 
-        <button id="control">
-            ▶ OpenBuilds CONTROL
-        </button>
+                <div>
+                    <span>Build</span>
+                    <strong id="build">Loading…</strong>
+                </div>
+            </div>
 
-        <button id="diagnostics">
-            🧰 Diagnostics
-        </button>
+            <div class="coordinates">
+                <div class="axis">
+                    <span>X</span>
+                    <strong id="x">0.000</strong>
+                </div>
 
-        <button id="settings">
-            ⚙ Settings
-        </button>
+                <div class="axis">
+                    <span>Y</span>
+                    <strong id="y">0.000</strong>
+                </div>
 
-        <button id="shutdown">
-            ⏻ Shutdown
-        </button>
+                <div class="axis">
+                    <span>Z</span>
+                    <strong id="z">0.000</strong>
+                </div>
+            </div>
 
-    </div>
+            <div class="telemetry">
+                <div>
+                    <span>Feed</span>
+                    <strong><span id="feed">0</span> mm/min</strong>
+                </div>
 
-</div>
+                <div>
+                    <span>Spindle</span>
+                    <strong><span id="spindle">0</span> RPM</strong>
+                </div>
+            </div>
+        </section>
 
-<script src="app.js"></script>
+        <section class="actions">
+            <button id="control" class="primary">
+                ▶ OpenBuilds CONTROL
+            </button>
 
+            <button id="diagnostics">
+                🧰 Diagnostics
+            </button>
+
+            <button id="settings">
+                ⚙ Settings
+            </button>
+
+            <button id="shutdown" class="danger">
+                ⏻ Shutdown
+            </button>
+        </section>
+
+        <footer class="status-bar">
+            <span id="api-status">API: Connecting…</span>
+            <span id="controller-status">GRBL: Unknown</span>
+            <span id="clock">--:--</span>
+        </footer>
+    </main>
+
+    <script src="app.js"></script>
 </body>
 </html>
