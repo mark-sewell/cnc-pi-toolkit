@@ -22,7 +22,16 @@ diagnosing a Raspberry Pi CNC control system.
 
 It automates system verification, software installation, OpenBuilds CONTROL
 setup, serial communication and GRBL controller diagnostics.
+## Current release
 
+**v0.6.0-alpha**
+
+This release includes the automated dashboard service, Chromium kiosk mode,
+animated Tux Plymouth branding, terminal branding and Raspberry Pi touchscreen
+integration.
+
+> The toolkit is under active development. GRBL hardware communication still
+> requires final verification with a connected CNC controller.
 ## Features
 
 ### System
