@@ -72,6 +72,7 @@ installer_main() {
     echo
     installer_install_dependencies
     branding_install_terminal_banner
+    branding_install_plymouth_theme
 
     echo
     diagnostics_run || true

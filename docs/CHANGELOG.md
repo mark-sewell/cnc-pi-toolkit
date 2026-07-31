@@ -6,6 +6,8 @@ All notable changes to the CNC Pi Toolkit will be documented in this file.
 
 ### Added
 
+- Automated Tux Plymouth animation and LightDM splash timing
+
 - Branded installer and interactive terminal banner
 
 - Integrated installer workflow

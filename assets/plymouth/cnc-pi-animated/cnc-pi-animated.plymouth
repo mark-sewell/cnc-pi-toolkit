@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=CNC Pi Animated
+Description=CNC Pi Toolkit with Tux pushing a rotating gear and pulsing laser
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/cnc-pi-animated
+ScriptFile=/usr/share/plymouth/themes/cnc-pi-animated/cnc-pi-animated.script

@@ -1,0 +1,52 @@
+screen_width = Window.GetWidth();
+screen_height = Window.GetHeight();
+
+frames[0] = Image("frames/frame-00.png");
+frames[1] = Image("frames/frame-01.png");
+frames[2] = Image("frames/frame-02.png");
+frames[3] = Image("frames/frame-03.png");
+frames[4] = Image("frames/frame-04.png");
+frames[5] = Image("frames/frame-05.png");
+frames[6] = Image("frames/frame-06.png");
+frames[7] = Image("frames/frame-07.png");
+frames[8] = Image("frames/frame-08.png");
+frames[9] = Image("frames/frame-09.png");
+frames[10] = Image("frames/frame-10.png");
+frames[11] = Image("frames/frame-11.png");
+frames[12] = Image("frames/frame-12.png");
+frames[13] = Image("frames/frame-13.png");
+frames[14] = Image("frames/frame-14.png");
+frames[15] = Image("frames/frame-15.png");
+frames[16] = Image("frames/frame-16.png");
+frames[17] = Image("frames/frame-17.png");
+frames[18] = Image("frames/frame-18.png");
+frames[19] = Image("frames/frame-19.png");
+frames[20] = Image("frames/frame-20.png");
+frames[21] = Image("frames/frame-21.png");
+frames[22] = Image("frames/frame-22.png");
+frames[23] = Image("frames/frame-23.png");
+
+sprite = Sprite(frames[0]);
+sprite.SetX((screen_width - 800) / 2);
+sprite.SetY((screen_height - 480) / 2);
+sprite.SetZ(-100);
+
+frame_number = 0;
+refresh_ticks = 0;
+
+fun refresh_callback ()
+{
+    refresh_ticks = refresh_ticks + 1;
+    if (refresh_ticks >= 3)
+    {
+        refresh_ticks = 0;
+        frame_number = frame_number + 1;
+        if (frame_number >= 24)
+        {
+            frame_number = 0;
+        }
+        sprite.SetImage(frames[frame_number]);
+    }
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
