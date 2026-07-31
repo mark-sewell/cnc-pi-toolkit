@@ -7,7 +7,13 @@
         content="width=device-width, initial-scale=1, viewport-fit=cover"
     >
     <title>CNC Pi Toolkit</title>
+
     <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="compact.css"
+        media="(max-width: 900px) and (max-height: 600px) and (orientation: landscape)"
+    >
 </head>
 
 <body>
@@ -72,30 +78,34 @@
             <div class="telemetry">
                 <div>
                     <span>Feed</span>
-                    <strong><span id="feed">0</span> mm/min</strong>
+                    <strong>
+                        <span id="feed">0</span> mm/min
+                    </strong>
                 </div>
 
                 <div>
                     <span>Spindle</span>
-                    <strong><span id="spindle">0</span> RPM</strong>
+                    <strong>
+                        <span id="spindle">0</span> RPM
+                    </strong>
                 </div>
             </div>
         </section>
 
         <section class="actions">
-            <button id="control" class="primary">
+            <button id="control" class="primary" type="button">
                 ▶ OpenBuilds CONTROL
             </button>
 
-            <button id="diagnostics">
+            <button id="diagnostics" type="button">
                 🧰 Diagnostics
             </button>
 
-            <button id="settings">
+            <button id="settings" type="button">
                 ⚙ Settings
             </button>
 
-            <button id="shutdown" class="danger">
+            <button id="shutdown" class="danger" type="button">
                 ⏻ Shutdown
             </button>
         </section>
