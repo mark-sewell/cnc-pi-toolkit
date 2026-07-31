@@ -6,6 +6,8 @@ All notable changes to the CNC Pi Toolkit will be documented in this file.
 
 ### Added
 
+- Branded installer and interactive terminal banner
+
 - Integrated installer workflow
 - Git installation and verification module
 - Node.js installation and verification module
