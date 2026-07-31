@@ -147,3 +147,43 @@ body {
     border-radius: 9px;
     font-size: 0.68rem;
 }
+
+/* Compact diagnostics window */
+
+.modal {
+    padding: 8px;
+}
+
+.modal-panel {
+    width: 100%;
+    max-height: calc(100vh - 16px);
+    border-radius: 12px;
+}
+
+.modal-header {
+    min-height: 52px;
+    padding: 7px 10px;
+}
+
+.modal-header .eyebrow {
+    margin-bottom: 1px;
+}
+
+.modal-header h2 {
+    font-size: 1rem;
+}
+
+.modal-close {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+}
+
+#diagnostics-output {
+    min-height: 0;
+    padding: 10px;
+    font-size: 0.68rem;
+    line-height: 1.35;
+}

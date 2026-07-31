@@ -277,3 +277,89 @@ button {
         padding: 14px 18px;
     }
 }
+
+/* Diagnostics window */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(6px);
+}
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal-panel {
+    width: min(1000px, 100%);
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(145deg, var(--panel), var(--panel-soft));
+    border: 2px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+}
+
+.modal.ready .modal-panel {
+    border-color: var(--accent);
+}
+
+.modal.warning .modal-panel {
+    border-color: var(--warning);
+}
+
+.modal.error .modal-panel {
+    border-color: var(--danger);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.modal-close {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #27333a;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.modal-close:hover,
+.modal-close:focus-visible {
+    border-color: var(--accent-blue);
+    outline: none;
+}
+
+#diagnostics-output {
+    min-height: 280px;
+    margin: 0;
+    padding: 24px;
+    overflow: auto;
+    color: #dbe7ec;
+    font-family: "DejaVu Sans Mono", Consolas, monospace;
+    font-size: 1rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+}

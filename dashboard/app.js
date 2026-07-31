@@ -14,7 +14,11 @@ const elements = {
     apiStatus: document.getElementById("api-status"),
     controllerStatus: document.getElementById("controller-status"),
     clock: document.getElementById("clock"),
-    controlButton: document.getElementById("control")
+    controlButton: document.getElementById("control"),
+    diagnosticsButton: document.getElementById("diagnostics"),
+    diagnosticsModal: document.getElementById("diagnostics-modal"),
+    diagnosticsClose: document.getElementById("diagnostics-close"),
+    diagnosticsOutput: document.getElementById("diagnostics-output")
 };
 
 function setMachineState(state) {
@@ -77,6 +81,10 @@ async function updateStatus() {
     } catch (error) {
         console.error(error);
 
+        /*
+         * The dashboard API is still available when GRBL is disconnected.
+         * Only the controller status is unavailable.
+         */
         elements.apiStatus.textContent = "API: Connected";
         elements.controllerStatus.textContent = "GRBL: Unavailable";
 
@@ -117,9 +125,11 @@ async function launchOpenBuilds() {
 
         if (data.status === "already-running") {
             elements.controlButton.textContent = "✓ Already running";
-            elements.apiStatus.textContent = "OpenBuilds: Already running";
+            elements.apiStatus.textContent =
+                "OpenBuilds: Already running";
         } else {
-            elements.controlButton.textContent = "✓ OpenBuilds launched";
+            elements.controlButton.textContent =
+                "✓ OpenBuilds launched";
             elements.apiStatus.textContent = "OpenBuilds: Launched";
         }
 
@@ -135,10 +145,91 @@ async function launchOpenBuilds() {
     }
 }
 
-elements.controlButton.addEventListener("click", launchOpenBuilds);
+function closeDiagnostics() {
+    elements.diagnosticsModal.hidden = true;
+    elements.diagnosticsButton.focus();
+}
 
-document.getElementById("diagnostics").addEventListener("click", () => {
-    alert("Diagnostics view will be connected next.");
+async function runDiagnostics() {
+    elements.diagnosticsButton.disabled = true;
+    elements.diagnosticsButton.textContent = "Running…";
+
+    elements.diagnosticsModal.classList.remove(
+        "ready",
+        "warning",
+        "error"
+    );
+
+    elements.diagnosticsModal.hidden = false;
+    elements.diagnosticsOutput.textContent =
+        "Running CNC Pi Toolkit diagnostics…";
+
+    try {
+        const response = await fetch("/api/actions/diagnostics", {
+            method: "POST",
+            headers: {
+                "X-CNC-Pi-Action": "dashboard"
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+            throw new Error(data.error || "Diagnostics failed");
+        }
+
+        elements.diagnosticsOutput.textContent = data.output;
+
+        if (data.healthy) {
+            elements.diagnosticsModal.classList.add("ready");
+            elements.diagnosticsButton.textContent = "✓ Diagnostics";
+            elements.apiStatus.textContent =
+                "Diagnostics: All checks passed";
+        } else {
+            /*
+             * This includes expected warnings such as a disconnected
+             * CNC controller or missing serial device.
+             */
+            elements.diagnosticsModal.classList.add("warning");
+            elements.diagnosticsButton.textContent = "⚠ Diagnostics";
+            elements.apiStatus.textContent =
+                "Diagnostics: Completed with warnings";
+        }
+    } catch (error) {
+        console.error(error);
+
+        elements.diagnosticsModal.classList.add("error");
+        elements.diagnosticsOutput.textContent =
+            `Diagnostics could not be completed.\n\n${error.message}`;
+
+        elements.diagnosticsButton.textContent = "✕ Diagnostics";
+        elements.apiStatus.textContent =
+            `Diagnostics: ${error.message}`;
+    } finally {
+        window.setTimeout(() => {
+            elements.diagnosticsButton.disabled = false;
+            elements.diagnosticsButton.textContent = "🧰 Diagnostics";
+        }, 2000);
+    }
+}
+
+elements.controlButton.addEventListener("click", launchOpenBuilds);
+elements.diagnosticsButton.addEventListener("click", runDiagnostics);
+elements.diagnosticsClose.addEventListener("click", closeDiagnostics);
+
+elements.diagnosticsModal.addEventListener("click", (event) => {
+    if (event.target === elements.diagnosticsModal) {
+        closeDiagnostics();
+    }
+});
+
+document.addEventListener("keydown", (event) => {
+    if (
+        event.key === "Escape" &&
+        !elements.diagnosticsModal.hidden
+    ) {
+        closeDiagnostics();
+    }
 });
 
 document.getElementById("settings").addEventListener("click", () => {
@@ -152,5 +243,5 @@ document.getElementById("shutdown").addEventListener("click", () => {
 updateStatus();
 updateClock();
 
-setInterval(updateStatus, 2000);
-setInterval(updateClock, 1000);
+window.setInterval(updateStatus, 2000);
+window.setInterval(updateClock, 1000);

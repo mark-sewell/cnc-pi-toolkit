@@ -196,6 +196,50 @@ function handleOpenBuilds(request, response) {
     });
 }
 
+function handleDiagnostics(request, response) {
+    if (request.headers["x-cnc-pi-action"] !== "dashboard") {
+        sendJson(response, 403, {
+            ok: false,
+            error: "Forbidden"
+        });
+        return;
+    }
+
+    execFile(
+        CNC_COMMAND,
+        ["diagnostics"],
+        {
+            cwd: PROJECT_ROOT,
+            timeout: 30000,
+            maxBuffer: 2 * 1024 * 1024
+        },
+        (error, stdout, stderr) => {
+            const output = [stdout.trim(), stderr.trim()]
+                .filter(Boolean)
+                .join("\n");
+
+            if (error && (error.killed || typeof error.code !== "number")) {
+                sendJson(response, 500, {
+                    ok: false,
+                    error: error.killed
+                        ? "Diagnostics timed out"
+                        : error.message
+                });
+                return;
+            }
+
+            sendJson(response, 200, {
+                ok: true,
+                healthy: !error,
+                status: error ? "warning" : "ready",
+                exitCode: error ? error.code : 0,
+                timestamp: new Date().toISOString(),
+                output: output || "Diagnostics produced no output."
+            });
+        }
+    );
+}
+
 function serveStatic(requestPath, response) {
     const relativePath =
         requestPath === "/" ? "index.html" : requestPath.replace(/^\/+/, "");
@@ -257,6 +301,13 @@ const server = http.createServer((request, response) => {
         url.pathname === "/api/actions/openbuilds"
     ) {
         handleOpenBuilds(request, response);
+        return;
+    }
+    if (
+        request.method === "POST" &&
+        url.pathname === "/api/actions/diagnostics"
+    ) {
+        handleDiagnostics(request, response);
         return;
     }
 
