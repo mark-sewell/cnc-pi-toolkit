@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+RESET='\033[0m'
+GREEN='\033[1;32m'
+WHITE='\033[1;37m'
+CYAN='\033[1;36m'
+RED='\033[1;31m'
+
+HOST_NAME="$(hostname)"
+IP_ADDRESS="$(hostname -I 2>/dev/null | awk '{print $1}')"
+IP_ADDRESS="${IP_ADDRESS:-Not connected}"
+
+if [[ -r /sys/class/thermal/thermal_zone0/temp ]]; then
+    CPU_TEMP_RAW="$(< /sys/class/thermal/thermal_zone0/temp)"
+    CPU_TEMP="$((CPU_TEMP_RAW / 1000))°C"
+else
+    CPU_TEMP="Unavailable"
+fi
+
+DISK_FREE="$(df -h / | awk 'NR == 2 {print $4}')"
+
+if ss -ltn 2>/dev/null | grep -qE '[:.]8080[[:space:]]'; then
+    DASHBOARD_STATUS="${GREEN}ONLINE${RESET}"
+else
+    DASHBOARD_STATUS="${RED}OFFLINE${RESET}"
+fi
+
+TOOLKIT_ROOT="$HOME/cnc-pi-toolkit"
+GIT_BRANCH="$(git -C "$TOOLKIT_ROOT" branch --show-current 2>/dev/null)"
+GIT_VERSION="$(git -C "$TOOLKIT_ROOT" describe \
+    --tags --always --dirty 2>/dev/null)"
+
+printf '\n'
+printf '%b\n' "${GREEN}   ██████╗███╗   ██╗ ██████╗"
+printf '%b\n' "${GREEN}  ██╔════╝████╗  ██║██╔════╝"
+printf '%b\n' "${GREEN}  ██║     ██╔██╗ ██║██║      ${WHITE}PI TOOLKIT"
+printf '%b\n' "${GREEN}  ██║     ██║╚██╗██║██║      SMARTER CNC CONTROL"
+printf '%b\n' "${GREEN}  ╚██████╗██║ ╚████║╚██████╗"
+printf '%b\n' "${GREEN}   ╚═════╝╚═╝  ╚═══╝ ╚═════╝${RESET}"
+printf '\n'
+printf "  ${CYAN}System${RESET}       %s\n" "$HOST_NAME"
+printf "  ${CYAN}IP address${RESET}   %s\n" "$IP_ADDRESS"
+printf "  ${CYAN}CPU temp${RESET}     %s\n" "$CPU_TEMP"
+printf "  ${CYAN}Disk free${RESET}    %s\n" "$DISK_FREE"
+printf "  ${CYAN}Dashboard${RESET}    %b\n" "$DASHBOARD_STATUS"
+printf "  ${CYAN}Toolkit${RESET}      %s · %s\n" \
+    "${GIT_BRANCH:-Unknown}" "${GIT_VERSION:-Unknown}"
+printf '\n'

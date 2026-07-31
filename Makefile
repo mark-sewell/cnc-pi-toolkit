@@ -10,6 +10,7 @@ syntax:
 	bash -n install.sh
 	bash -n lib/*.sh
 	bash -n modules/*.sh
+	bash -n bin/*
 	bash -n tests/*.sh
 
 lint:

@@ -45,6 +45,7 @@ load_library "serial_io"
 load_module "openbuilds"
 load_module "grbl"
 load_module "diagnostics"
+load_module "branding"
 
 installer_banner() {
     echo
@@ -70,6 +71,7 @@ installer_main() {
 
     echo
     installer_install_dependencies
+    branding_install_terminal_banner
 
     echo
     diagnostics_run || true
