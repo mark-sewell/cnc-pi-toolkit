@@ -1,0 +1,25 @@
+[Unit]
+Description=CNC Pi Toolkit Dashboard
+Documentation=https://github.com/mark-sewell/cnc-pi-toolkit
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=@USER@
+Group=@GROUP@
+WorkingDirectory=@PROJECT_ROOT@
+ExecStart=@NODE@ @PROJECT_ROOT@/dashboard/server.js
+Environment=NODE_ENV=production
+
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

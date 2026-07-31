@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+#
+# CNC Pi Toolkit
+# Chromium kiosk launcher
+#
+
+set -Eeuo pipefail
+
+readonly DASHBOARD_URL="${CNC_PI_DASHBOARD_URL:-http://127.0.0.1:8080}"
+readonly MAX_ATTEMPTS="${CNC_PI_KIOSK_ATTEMPTS:-60}"
+readonly RETRY_DELAY="${CNC_PI_KIOSK_RETRY_DELAY:-0.5}"
+
+find_chromium() {
+    local candidate
+
+    for candidate in chromium chromium-browser; do
+        if command -v "${candidate}" >/dev/null 2>&1; then
+            command -v "${candidate}"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+wait_for_dashboard() {
+    local attempt
+
+    for ((attempt = 1; attempt <= MAX_ATTEMPTS; attempt++)); do
+        if curl \
+            --fail \
+            --silent \
+            --show-error \
+            --max-time 1 \
+            "${DASHBOARD_URL}/" \
+            >/dev/null 2>&1; then
+            return 0
+        fi
+
+        sleep "${RETRY_DELAY}"
+    done
+
+    printf 'Dashboard did not become ready: %s\n' \
+        "${DASHBOARD_URL}" >&2
+    return 1
+}
+
+main() {
+    local chromium
+
+    chromium="$(find_chromium)" || {
+        printf 'Chromium was not found.\n' >&2
+        return 1
+    }
+
+    pkill -x wf-panel-pi 2>/dev/null || true
+
+    wait_for_dashboard
+
+    exec "${chromium}" \
+        --kiosk \
+        --password-store=basic \
+        --noerrdialogs \
+        --disable-infobars \
+        --disable-session-crashed-bubble \
+        --no-first-run \
+        --incognito \
+        "${DASHBOARD_URL}"
+}
+
+main "$@"

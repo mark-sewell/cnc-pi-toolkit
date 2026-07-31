@@ -46,6 +46,7 @@ load_module "openbuilds"
 load_module "grbl"
 load_module "diagnostics"
 load_module "branding"
+load_module "dashboard"
 
 installer_banner() {
     echo
@@ -71,6 +72,7 @@ installer_main() {
 
     echo
     installer_install_dependencies
+    dashboard_install
     branding_install_terminal_banner
     branding_install_plymouth_theme
 
